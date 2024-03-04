@@ -32,6 +32,13 @@ def c_comma(vec):
 def c_period(vec):
     print(chr(vec[vec[-1]]))
     return vec
+def c_from(vec):
+    command_list = []
+    def from_innner(command_list):
+        answer = input("ループするコマンドを入力せよ")
+        if answer == ">":
+            command_list.append(c_right)
+        
 
 
 
