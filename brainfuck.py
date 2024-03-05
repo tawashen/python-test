@@ -34,6 +34,13 @@ def c_comma(vec):
 def c_period(vec):
     print(chr(vec[vec[-1]]))
     return vec
+def c_plus_multi(vec, answer):
+    vec[vec[-1]] += len(answer)
+    return vec
+def c_minus_multi(vec, answer):
+    vec[vec[-1]] -= len(answer)
+    return vec
+    
 
 from functools import reduce
 
@@ -53,8 +60,7 @@ def c_from(vec):
             to_point_zero(vec, origin_command_list)
         else:
             command_list.append(command_table[answer])
-            from_inner(command_list)
-            
+            from_inner(command_list)            
     from_inner(command_list)
     return vec
 #From_innerでVecが返って来て、ここでVecを返せるということは
@@ -72,11 +78,14 @@ def brain_read(memory):
     elif answer == "[":
         brain_read(c_from(memory))
     elif len(answer) >= 2 and answer[0] == "+":
-        brain_read(c_plus_multi(memory))
+        brain_read(c_plus_multi(memory, answer))
     elif len(answer) >= 2 and answer[0] == "-":
-        brain_read(c_minus_multi(memory))
+        brain_read(c_minus_multi(memory, answer))
     else:
-        brain_read(command_table[answer](memory))
+        try:
+            brain_read(command_table[answer](memory))
+        except KeyError:
+            brain_read(memory)
         
 
 brain_read(memory)
