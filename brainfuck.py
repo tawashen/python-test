@@ -39,19 +39,26 @@ from functools import reduce
 
 def c_from(vec):
     command_list = []
-    pointer = vec[-1]
     def from_inner(command_list):
         answer = input("ループするコマンドを入力せよ")
         if answer == "]":
-            return reduce(lambda world, x:x(world), command_list, vec)
+            origin_command_list = command_list
+            pointer = vec[-1]
+            def to_point_zero(vec, command_list):
+                new_vec = reduce(lambda world, x:x(world), command_list, vec)
+                if new_vec[pointer] == 0:
+                    return new_vec
+                else:
+                    to_point_zero(new_vec, origin_command_list)
+            to_point_zero(vec, origin_command_list)
         else:
             command_list.append(command_table[answer])
             from_inner(command_list)
             
     from_inner(command_list)
     return vec
-　　#From_innerでVecが返って来て、ここでVecを返せるということは
-　　#破壊的に実引数が変化してるってことか？
+#From_innerでVecが返って来て、ここでVecを返せるということは
+#破壊的に実引数が変化してるってことか？
             
 
 command_table = {">": c_right, "<": c_left, "+": c_plus, "-": c_minus,
