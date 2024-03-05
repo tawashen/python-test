@@ -4,6 +4,8 @@ def decide_memory_size():
 
 memory = decide_memory_size()
 
+
+
 def c_right(vec): #->memory
     if vec[-1] >= len(vec):
         return vec
@@ -32,35 +34,43 @@ def c_comma(vec):
 def c_period(vec):
     print(chr(vec[vec[-1]]))
     return vec
+
+from functools import reduce
+
 def c_from(vec):
     command_list = []
-    def from_innner(command_list):
+    pointer = vec[-1]
+    def from_inner(command_list):
         answer = input("ループするコマンドを入力せよ")
-        if answer == ">":
-            command_list.append(c_right)
-        
+        if answer == "]":
+            return reduce(lambda world, x:x(world), command_list, vec)
+        else:
+            command_list.append(command_table[answer])
+            from_inner(command_list)
+            
+    from_inner(command_list)
+    return vec
+　　#From_innerでVecが返って来て、ここでVecを返せるということは
+　　#破壊的に実引数が変化してるってことか？
+            
 
+command_table = {">": c_right, "<": c_left, "+": c_plus, "-": c_minus,
+                ",": c_comma, ".": c_period}
 
 
 def brain_read(memory):
     answer = input("command?")
-    if answer == ">":
-        brain_read(c_right(memory))
-    elif answer == "<":
-        brain_read(c_left(memory))
-    elif answer == "+":
-        brain_read(c_plus(memory))
-    elif answer =="-":
-        brain_read(c_minus(memory))
-    elif answer ==",":
-        brain_read(c_comma(memory))
-    elif answer ==".":
-        brain_read(c_period(memory))        
-    elif answer == "p":
+    if answer == "p":
         print(memory)
+    elif answer == "[":
+        brain_read(c_from(memory))
+    elif len(answer) >= 2 and answer[0] == "+":
+        brain_read(c_plus_multi(memory))
+    elif len(answer) >= 2 and answer[0] == "-":
+        brain_read(c_minus_multi(memory))
     else:
-        brain_read(memory)
-
+        brain_read(command_table[answer](memory))
+        
 
 brain_read(memory)
 #print(memory)
